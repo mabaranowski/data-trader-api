@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const {User} = require('./models/user');
 const dashboard = require('./router/dashboard');
 const auth = require('./router/auth');
+const settings = require('./router/settings');
 const express = require('express');
 const cors = require('cors');
 
@@ -11,6 +12,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/dashboard', dashboard);
 app.use('/api/auth', auth);
+app.use('/api/settings', settings);
 
 mongoose.connect('mongodb://localhost/data-trader-db', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log(`Connected to database..`))

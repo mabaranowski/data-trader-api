@@ -5,11 +5,6 @@ const bcrypt = require('bcrypt');
 const _ = require('lodash');
 const auth = require('../middleware/auth');
 
-router.get('/users', async (req, res) => {
-    const users = await User.find();
-    res.send(users);
-});
-
 router.get('/me', auth, async (req, res) => {
     const user = await User.findById(req.user._id).select('-password');
     res.send(user);
@@ -30,16 +25,23 @@ router.post('/register', async (req, res) => {
     await user.save();
 
     const token = user.generateAuthToken();
-    res.header('x-auth', token).send(_.pick(user, ['_id', 'email']));
+    res.header('x-auth', token).send({ ..._.pick(user, ['email']), token });
 });
 
 router.post('/login', async (req, res) => {
     const user = await User.findOne({email: req.body.email});
+    if(!user) {
+        return res.status(400).send('Invalid email or password');
+    }
+    
     const validPassword = await bcrypt.compare(req.body.password, user.password);
-    if(!validPassword) { return res.status(400).send('Invalid email or password'); }
+    if(!validPassword) { 
+        return res.status(400).send('Invalid email or password'); 
+    }
 
     const token = user.generateAuthToken();
-    res.send(token);
+    const email = user.email;
+    res.send({email, token});
 });
 
 module.exports = router;
