@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const {User} = require('../models/user');
 const bcrypt = require('bcrypt');
 
-router.post('/', auth, async (req, res) => {
+router.post('/change-password', auth, async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const newPassword = await bcrypt.hash(req.body.password, salt);
 
@@ -14,6 +14,12 @@ router.post('/', auth, async (req, res) => {
         }
     });
     res.send(result);
+});
+
+router.post('/check-password', auth, async (req, res) => {
+    const user = await User.findOne({email: req.body.email});
+    const validPassword = await bcrypt.compare(req.body.password, user.password);
+    res.send(validPassword); 
 });
 
 module.exports = router;
