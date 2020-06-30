@@ -3,10 +3,22 @@ const jwt = require('jsonwebtoken');
 const config = require('config');
 
 const userSchema = new mongoose.Schema({
-    first_name: String,
-    last_name: String,
     email: String,
-    password: String
+    password: String,
+    metrics: {
+        firstName: String,
+        lastName: String,
+        age: Number,
+        genderGroup: String,
+        longitude: String,
+        latitude: String,
+        city: String,
+        settingsGroup: String,
+        education: String,
+        householdIncome: Number,
+        residents: Number,
+        energy: Number
+    }
 });
 
 userSchema.methods.generateAuthToken = function() {

@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const {User} = require('../models/user');
 const bcrypt = require('bcrypt');
 
-router.post('/change-password', auth, async (req, res) => {
+router.patch('/change-password', auth, async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const newPassword = await bcrypt.hash(req.body.password, salt);
 
