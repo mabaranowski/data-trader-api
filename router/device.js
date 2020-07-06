@@ -38,16 +38,17 @@ router.get('/', auth, async (req, res) => {
         },
         {
             $project: {
-                name: 1,
-                address: 1,
-                port: 1,
-                type: 1,
-                location: 1
+                name: 1
             }
         }
     ]);
 
     res.send(devices);
+});
+
+router.get('/:id', auth, async (req, res) => {
+    const device = await Device.findById(req.params.id);
+    res.send(device);
 });
 
 router.delete('/', auth, async (req, res) => {
