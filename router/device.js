@@ -38,7 +38,9 @@ router.get('/', auth, async (req, res) => {
         },
         {
             $project: {
-                name: 1
+                name: 1,
+                address: 1,
+                port: 1
             }
         }
     ]);
