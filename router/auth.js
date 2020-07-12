@@ -41,7 +41,8 @@ router.post('/login', async (req, res) => {
 
     const token = user.generateAuthToken();
     const email = user.email;
-    res.send({email, token});
+    const isSharing = user.isSharing;
+    res.send({email, token, isSharing});
 });
 
 module.exports = router;

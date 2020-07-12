@@ -18,7 +18,8 @@ const userSchema = new mongoose.Schema({
         householdIncome: Number,
         residents: Number,
         energy: Number
-    }
+    },
+    isSharing: Boolean
 });
 
 userSchema.methods.generateAuthToken = function() {
