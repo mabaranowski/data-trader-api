@@ -7,6 +7,7 @@ const datasetSchema = new mongoose.Schema({
     location: String,
     quantity: Number,
     date: Date,
+    lastUpdated: Date,
     description: String,
     data: [{ type: Schema.Types.ObjectId, ref: 'Data' }]
 });

@@ -6,7 +6,8 @@ const settings = require('./router/settings');
 const metrics = require('./router/metrics');
 const device = require('./router/device');
 const data = require('./router/data');
-const dataset = require('./services/dataset');
+const dataset = require('./router/dataset');
+const scheduler = require('./services/scheduler');
 const express = require('express');
 const cors = require('cors');
 
@@ -19,14 +20,15 @@ app.use('/api/settings', settings);
 app.use('/api/metrics', metrics);
 app.use('/api/device', device);
 app.use('/api/data', data);
+app.use('/api/dataset', dataset);
 
 mongoose.connect('mongodb://localhost/data-trader-db', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log(`Connected to database..`))
 .catch(err => console.log(`Could not connect to database..`, err));
 
-dataset.bundleTypeScheduler();
-dataset.bundleLocationScheduler();
-dataset.streamTypeScheduler();
-dataset.streamLocationScheduler();
+scheduler.bundleTypeScheduler();
+scheduler.bundleLocationScheduler();
+scheduler.streamTypeScheduler();
+scheduler.streamLocationScheduler();
 
 app.listen(config.get('port'), () => console.log(`Listening on port ${config.get('port')}..`));

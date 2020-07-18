@@ -72,7 +72,7 @@ const createDataset = (data, variable, isType) => {
         date: yesterday,
         data: data
     });
-
+    
     if (isType) {
         dataset.type = variable;
         dataset.description = `Bundle for ${shortYesterday} of ${variable}`;
@@ -86,6 +86,8 @@ const createDataset = (data, variable, isType) => {
 
 const updateDatasetStream = async (data, field, variable) => {
     const query = { [field]: variable, internalType: 'stream' };
+    const oldData = await Dataset.findOne(query);
+
     await Dataset.updateOne(query,
         {
             $addToSet: { data: data },
@@ -97,9 +99,14 @@ const updateDatasetStream = async (data, field, variable) => {
     );
     
     const currentData = await Dataset.findOne(query);
-    await Dataset.updateOne(query, {
-        $set: { quantity: currentData.data.length }
-    });
+    if(!!oldData && oldData.data.length !== currentData.data.length) {
+        await Dataset.updateOne(query, {
+            $set: { 
+                quantity: currentData.data.length,
+                lastUpdated: new Date()
+            }
+        });
+    }
 };
 
 const aggregateDataByTimeAndField = (startTime, endTime, field, variable) => {
