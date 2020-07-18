@@ -9,7 +9,7 @@ router.post('/', auth, async (req, res) => {
         device: req.body.id,
         payload: req.body.payload
     });
-    
+
     const result = await data.save();
     res.send(result);
 });

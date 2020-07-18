@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const {User} = require('../models/user');
+const {User} = require('../models/user.model');
 const bcrypt = require('bcrypt');
 
 router.patch('/change-password', auth, async (req, res) => {

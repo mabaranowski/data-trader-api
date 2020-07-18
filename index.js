@@ -1,12 +1,12 @@
 const config = require('config');
 const mongoose = require('mongoose');
-const {User} = require('./models/user');
 const dashboard = require('./router/dashboard');
 const auth = require('./router/auth');
 const settings = require('./router/settings');
 const metrics = require('./router/metrics');
 const device = require('./router/device');
 const data = require('./router/data');
+const dataset = require('./services/dataset');
 const express = require('express');
 const cors = require('cors');
 
@@ -24,9 +24,9 @@ mongoose.connect('mongodb://localhost/data-trader-db', {useNewUrlParser: true, u
 .then(() => console.log(`Connected to database..`))
 .catch(err => console.log(`Could not connect to database..`, err));
 
-async function findUser() {
-    const users = await User.find();
-    console.log(users);
-}
+dataset.bundleTypeScheduler();
+dataset.bundleLocationScheduler();
+dataset.streamTypeScheduler();
+dataset.streamLocationScheduler();
 
 app.listen(config.get('port'), () => console.log(`Listening on port ${config.get('port')}..`));
