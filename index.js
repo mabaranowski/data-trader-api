@@ -26,9 +26,7 @@ mongoose.connect('mongodb://localhost/data-trader-db', {useNewUrlParser: true, u
 .then(() => console.log(`Connected to database..`))
 .catch(err => console.log(`Could not connect to database..`, err));
 
-scheduler.bundleTypeScheduler();
-scheduler.bundleLocationScheduler();
-scheduler.streamTypeScheduler();
-scheduler.streamLocationScheduler();
+scheduler.startBundleJob();
+scheduler.startStreamJob();
 
 app.listen(config.get('port'), () => console.log(`Listening on port ${config.get('port')}..`));

@@ -2,10 +2,7 @@
     "port": 3000,
     "jwtPrivateKey": "secret_key",
     "cronExpression": {
-        "bundleByType": "0 3 * * *",
-        "bundleByLocation": "0 3 * * *",
-        "streamByType": "*/10 * * * *",
-        "streamByLocation": "*/10 * * * *"
+        "createBundle": "0 3 * * *",
+        "createStream": "*/10 * * * *"
     }
-    
 }

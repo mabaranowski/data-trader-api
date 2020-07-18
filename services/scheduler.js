@@ -17,91 +17,69 @@ const updateDates = () => {
     endPast = moment().toISOString();
 };
 
-const createStreamByType = () => {
-    cron.schedule(config.get('cronExpression.streamByType'), async () => {
+const createStreams = () => {
+    cron.schedule(config.get('cronExpression.createStream'), async () => {
         updateDates();
         DEVICE_TYPE.forEach(async type => {
-            const data = await aggregateDataByTimeAndField(startPast, endPast, 'type', type);
-            updateDatasetStream(data, 'type', type);
+            DEVICE_LOCATION.forEach(async location => {
+                const data = await aggregateData(startPast, endPast, type, location);
+                saveStream(data, type, location);
+            });
         });
     });
 };
 
-const createStreamByLocation = () => {
-    cron.schedule(config.get('cronExpression.streamByLocation'), async () => {
-        updateDates();
-        DEVICE_LOCATION.forEach(async location => {
-            const data = await aggregateDataByTimeAndField(startPast, endPast, 'location', location);
-            updateDatasetStream(data, 'location', location);
-        });
-    });
-};
-
-const createBundleByType = () => {
-    cron.schedule(config.get('cronExpression.bundleByType'), async () => {
+const createBundles = () => {
+    cron.schedule(config.get('cronExpression.createBundle'), async () => {
         updateDates();
         DEVICE_TYPE.forEach(async type => {
-            const data = await aggregateDataByTimeAndField(startYesterday, endYesterday, 'type', type);
+            DEVICE_LOCATION.forEach(async location => {
+                const data = await aggregateData(startYesterday, endYesterday, type, location);
 
-            if (data.length !== 0) {
-                const dataset = createDataset(data, type, true);
-                await dataset.save();
-            }
+                if (data.length !== 0) {
+                    saveBundle(data, type, location);
+                }
+            });
         });
     });
 };
 
-const createBundleByLocation = () => {
-    cron.schedule(config.get('cronExpression.bundleByLocation'), async () => {
-        updateDates();
-        DEVICE_LOCATION.forEach(async location => {
-            const data = await aggregateDataByTimeAndField(startYesterday, endYesterday, 'location', location);
-
-            if (data.length !== 0) {
-                const dataset = createDataset(data, location, false);
-                await dataset.save();
-            }
-        });
-    });
-};
-
-const createDataset = (data, variable, isType) => {
+const saveBundle = async (data, type, location) => {
     const dataset = new Dataset({
         internalType: DATASET_TYPE.BUNDLE,
         quantity: data.length,
         date: yesterday,
+        type: type,
+        location: location,
+        description: `Bundle for ${shortYesterday} of ${type} data in ${location}`,
         data: data
     });
-    
-    if (isType) {
-        dataset.type = variable;
-        dataset.description = `Bundle for ${shortYesterday} of ${variable}`;
-    } else {
-        dataset.location = variable;
-        dataset.description = `Bundle for ${shortYesterday} at ${variable}`;
-    }
 
-    return dataset;
+    await dataset.save();
 };
 
-const updateDatasetStream = async (data, field, variable) => {
-    const query = { [field]: variable, internalType: 'stream' };
+const saveStream = async (data, type, location) => {
+    const query = { internalType: 'stream', type: type, location: location };
     const oldData = await Dataset.findOne(query);
 
     await Dataset.updateOne(query,
         {
             $addToSet: { data: data },
-            $setOnInsert: { description: `Stream of ${variable} data` }
+            $setOnInsert: {
+                type: type,
+                location: location,
+                description: `Stream of ${type} data in ${location}`
+            }
         },
         {
             upsert: true
         }
     );
-    
+
     const currentData = await Dataset.findOne(query);
-    if(!!oldData && oldData.data.length !== currentData.data.length) {
+    if (!!oldData && oldData.data.length !== currentData.data.length) {
         await Dataset.updateOne(query, {
-            $set: { 
+            $set: {
                 quantity: currentData.data.length,
                 lastUpdated: new Date()
             }
@@ -109,7 +87,7 @@ const updateDatasetStream = async (data, field, variable) => {
     }
 };
 
-const aggregateDataByTimeAndField = (startTime, endTime, field, variable) => {
+const aggregateData = (startTime, endTime, type, location) => {
     const result = Data.aggregate([
         {
             $match: {
@@ -129,13 +107,16 @@ const aggregateDataByTimeAndField = (startTime, endTime, field, variable) => {
             }
         },
         { $unwind: '$device' },
-        { $match: { [`device.${field}`]: variable } }
+        {
+            $match: {
+                'device.type': type,
+                'device.location': location
+            }
+        }
     ]);
 
     return result;
 };
 
-module.exports.bundleTypeScheduler = createBundleByType;
-module.exports.bundleLocationScheduler = createBundleByLocation;
-module.exports.streamTypeScheduler = createStreamByType;
-module.exports.streamLocationScheduler = createStreamByLocation;
+module.exports.startBundleJob = createBundles;
+module.exports.startStreamJob = createStreams;
