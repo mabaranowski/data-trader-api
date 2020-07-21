@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+const Schema = mongoose.Schema;
 
 const userSchema = new mongoose.Schema({
     email: String,
@@ -19,7 +20,8 @@ const userSchema = new mongoose.Schema({
         residents: Number,
         energy: Number
     },
-    isSharing: Boolean
+    isSharing: Boolean,
+    datasets: [{ type: Schema.Types.ObjectId, ref: 'Dataset' }]
 });
 
 userSchema.methods.generateAuthToken = function() {

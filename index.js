@@ -7,6 +7,7 @@ const metrics = require('./router/metrics');
 const device = require('./router/device');
 const data = require('./router/data');
 const dataset = require('./router/dataset');
+const purchase = require('./router/purchase');
 const scheduler = require('./services/scheduler');
 const express = require('express');
 const cors = require('cors');
@@ -21,6 +22,7 @@ app.use('/api/metrics', metrics);
 app.use('/api/device', device);
 app.use('/api/data', data);
 app.use('/api/dataset', dataset);
+app.use('/api/purchase', purchase);
 
 mongoose.connect('mongodb://localhost/data-trader-db', {useNewUrlParser: true, useUnifiedTopology: true})
 .then(() => console.log(`Connected to database..`))
