@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { Data } = require('../models/data.model');
-const { Device } = require('../models/device.model');
 
 router.post('/', auth, async (req, res) => {
     const data = new Data({

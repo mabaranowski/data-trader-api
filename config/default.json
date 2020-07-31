@@ -1,5 +1,6 @@
 {
     "port": 3000,
+    "databaseURL": "mongodb://localhost/data-trader-db",
     "jwtPrivateKey": "secret_key",
     "cronExpression": {
         "createBundle": "0 3 * * *",

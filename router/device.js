@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
-const {User} = require('../models/user.model');
-const {Device} = require('../models/device.model');
+const { User } = require('../models/user.model');
+const { Device } = require('../models/device.model');
 
 router.post('/', auth, async (req, res) => {
     const user = await User.findOne({email: req.body.email});
