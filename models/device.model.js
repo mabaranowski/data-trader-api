@@ -27,14 +27,14 @@ const DEVICE_TYPE = [
 ];
 
 const DEVICE_LOCATION = [
-    'living',
-    'bedroom',
-    'kitchen',
-    'bathroom',
-    'dining',
-    'garden',
-    'hall',
-    'garage'
+    'poznan',
+    'wroclaw',
+    'gdansk',
+    'krakow',
+    'lodz',
+    'szczecin',
+    'warszawa',
+    'lublin'
 ];
 
 exports.Device = Device;
