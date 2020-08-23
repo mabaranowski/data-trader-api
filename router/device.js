@@ -11,9 +11,12 @@ router.post('/', auth, async (req, res) => {
         user: user._id,
         name: req.body.form.deviceName,
         address: req.body.form.deviceAddress,
-        port: req.body.form.devicePort,
+        response: req.body.form.responseType,
+        tag: req.body.form.dataTag,
         type: req.body.form.deviceType,
-        location: req.body.form.deviceLocation
+        location: req.body.form.deviceLocation,
+        longitude: req.body.form.longitude,
+        latitude: req.body.form.latitude
     });
     
     const result = await device.save();
@@ -40,11 +43,11 @@ router.get('/', auth, async (req, res) => {
             $project: {
                 name: 1,
                 address: 1,
-                port: 1
+                tag: 1
             }
         }
     ]);
-
+    
     res.send(devices);
 });
 

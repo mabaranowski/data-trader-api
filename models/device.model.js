@@ -5,9 +5,12 @@ const deviceSchema = new mongoose.Schema({
     user: { type: Schema.Types.ObjectId, ref: 'User' },
     name: String,
     address: String,
-    port: Number,
+    response: String,
+    tag: String,
     type: String,
-    location: String
+    location: String,
+    longitude: Number,
+    latitude: Number
 });
 
 const Device = mongoose.model('Device', deviceSchema);
