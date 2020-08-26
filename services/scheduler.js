@@ -91,7 +91,7 @@ const aggregateData = (startTime, endTime, type, location) => {
     const result = Data.aggregate([
         {
             $match: {
-                'payload.time': {
+                'time': {
                     $gte: startTime,
                     $lte: endTime
                 }

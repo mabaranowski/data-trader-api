@@ -2,10 +2,12 @@ const express = require('express');
 const router = express.Router();
 const auth = require('../middleware/auth');
 const { Data } = require('../models/data.model');
+const moment = require('moment');
 
 router.post('/', auth, async (req, res) => {
     const data = new Data({
         device: req.body.id,
+        time: moment().toISOString(),
         payload: req.body.payload
     });
 
