@@ -32,7 +32,7 @@ router.get('/:id/unwrapped', auth, async (req, res) => {
             }
         },
         { $unwind: '$data' },
-        { $project: { data: '$data.payload', _id: 0 } }
+        { $project: { data: '$data.payload', time: '$data.time', _id: 0 } }
     ]);
     res.send(dataset);
 });
